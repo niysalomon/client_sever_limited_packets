@@ -1,15 +1,18 @@
+#!/usr/bin/env python3
 import time, socket, sys
+import arguments
+from arguments import *
 
 print("\nWelcome to Chat Room\n")
 print("Initialising....\n")
 time.sleep(1)
 s = socket.socket()
-shost = socket.gethostname()
-ip = socket.gethostbyname(shost)
-print(shost, "(", ip, ")\n")
-host = input(str("Enter server address: "))
-name = input(str("\nEnter your name: "))
-port = 1231
+host = socket.gethostname()
+ip = socket.gethostbyname(host)
+print(host, "(", ip, ")\n")
+host = '127.0.1.1'
+name = 'Client'
+port = 60001
 print("\nTrying to connect to ", host, "(", port, ")\n")
 time.sleep(1)
 s.connect((host, port))
@@ -19,20 +22,18 @@ s.send(name.encode())
 s_name = s.recv(1024)
 s_name = s_name.decode()
 print(s_name, "has joined the chat room\nEnter [ help ] to get help\n")
-message =''
+initial_message =''
 while True:
-    messagez = s.recv(1024)
-    messagez = messagez.decode()
-    # chunk=[]
-    # for word in message:
-    #     messagez = chunk.append(word)
-    message += messagez
-    print(s_name, ":", message)
-    message = input(str("Me : "))
-    if message == "help":
-        message = "Tho!"
-        s.send(message.encode())
-        print("\n")
-        break
-    s.send(message.encode())
-    # id_rec +=1
+    input_message = input(str("Me : "))
+    s.send(input_message.encode())
+    message_received = s.recv(1024)
+    message_received_decoded = message_received.decode()
+    # replaced_messages=''
+    # for message in message_received_decoded:
+    #     initial_message += message
+    # message_striped=message_received_decoded.strip().replace(',','')
+    replaced_message=message_received_decoded.replace("'",'')
+    replaced_messages=replaced_message.replace("[", '')
+    replaced_messages=replaced_messages.replace(', ','')
+    print(s_name, ":", replaced_messages.replace("]",''))
+
